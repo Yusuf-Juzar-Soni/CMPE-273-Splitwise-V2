@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders 1`] = `
+<div>
+  <div>
+    <div>
+      <nav
+        className="navbar navbar-expand-lg navbar-light bg-success"
+      >
+        <a
+          className="navbar-brand"
+          href="#home"
+        >
+          <img
+            height="50"
+            src="login_logo.png"
+            width="50"
+          />
+        </a>
+        <div
+          className="mr-auto navbar-nav"
+          onKeyDown={[Function]}
+        >
+          <a
+            className="nav-link"
+            data-rb-event-key="#home"
+            href="#home"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+          />
+        </div>
+        <div
+          className="dropdown"
+        >
+          <button
+            aria-expanded={false}
+            aria-haspopup={true}
+            className="dtoggle dropdown-toggle btn btn-info"
+            disabled={false}
+            id="dropdown-basic"
+            onClick={[Function]}
+            type="button"
+          >
+            
+          </button>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div
+    className="row"
+  >
+    <div
+      className="col-md-2"
+      div={true}
+    />
+    <div
+      className="col-md-10"
+    >
+      <h4
+        data-testid="Activity"
+      >
+        Recent Activity
+      </h4>
+      <br />
+      <div
+        className="row ml-1"
+      >
+        <div
+          className="col-sm-12"
+        >
+          <div
+            className="list-group list-group-flush"
+            onKeyDown={[Function]}
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

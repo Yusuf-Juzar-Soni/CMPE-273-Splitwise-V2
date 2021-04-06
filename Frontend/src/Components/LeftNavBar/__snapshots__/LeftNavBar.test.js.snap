@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders 1`] = `
+<div>
+  <div>
+    <div
+      className="flex-column nav"
+      color="red"
+      onKeyDown={[Function]}
+    >
+      <a
+        className="nav-link"
+        data-rb-event-key={null}
+        href="#"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="button"
+      >
+        Dashboard
+      </a>
+      <a
+        className="nav-link"
+        data-rb-event-key={null}
+        data-testid="Activity"
+        href="#"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="button"
+      >
+        Activity
+      </a>
+      <a
+        className="nav-link"
+        data-rb-event-key={null}
+        href="#"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="button"
+      >
+        Groups
+      </a>
+      <input
+        onChange={[Function]}
+        type="text"
+      />
+      <div
+        className="list-group-design list-group"
+        onKeyDown={[Function]}
+      />
+      <a
+        className="nav-link"
+        data-rb-event-key={null}
+        href="#"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="button"
+      >
+        Create Group
+      </a>
+      <a
+        className="nav-link"
+        data-rb-event-key={null}
+        href="#"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="button"
+      >
+        Invite List
+      </a>
+    </div>
+  </div>
+</div>
+`;

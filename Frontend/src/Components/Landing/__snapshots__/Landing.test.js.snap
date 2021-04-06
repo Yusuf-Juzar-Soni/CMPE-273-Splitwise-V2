@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders 1`] = `
+<div>
+  <div>
+    <nav
+      className="navbar navbar-expand-lg navbar-light bg-success"
+    >
+      <span
+        className="navbar-brand"
+      >
+        <img
+          height="50"
+          src="login_logo.png"
+          width="50"
+        />
+      </span>
+      <div
+        className="mr-auto navbar-nav"
+        onKeyDown={[Function]}
+      >
+        <a
+          className="nav-link"
+          data-rb-event-key="#home"
+          href="#home"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+        />
+      </div>
+      <a
+        className="btn btn-success"
+        data-testid="Login"
+        href="./login"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+      >
+        Login
+      </a>
+      <a
+        className="btn btn-success"
+        href="./signup"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+      >
+        Signup
+      </a>
+    </nav>
+  </div>
+  <div>
+    <img
+      height="600"
+      src="splitwise_home_2.png"
+      width="1350"
+    />
+    <img
+      height="600"
+      src="splitwise_home_3.png"
+      style={
+        Object {
+          "marginTop": 80,
+        }
+      }
+      width="1350"
+    />
+  </div>
+</div>
+`;

@@ -1,0 +1,9 @@
+.flex-column{
+background-color:rgb(246, 252, 246) !important;
+height: 100vh;
+width: 200px;     /* Set the width of the sidebar */
+z-index: 1;      /* Stay on top of everything */
+     /* Stay at the top */
+padding-top: 10px;
+
+}

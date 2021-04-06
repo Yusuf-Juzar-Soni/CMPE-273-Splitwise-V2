@@ -1,0 +1,137 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders 1`] = `
+<div>
+  <nav
+    className="navbar navbar-expand-lg navbar-light bg-success"
+  >
+    <span
+      className="navbar-brand"
+    >
+      <img
+        height="50"
+        src="login_logo.png"
+        width="50"
+      />
+    </span>
+    <div
+      className="mr-auto navbar-nav"
+      onKeyDown={[Function]}
+    >
+      <a
+        className="nav-link"
+        data-rb-event-key="#home"
+        href="#home"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+      />
+    </div>
+    <a
+      className="btn btn-success"
+      href="./login"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+    >
+      Login
+    </a>
+    <a
+      className="btn btn-success"
+      href="./signup"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+    >
+      Signup
+    </a>
+  </nav>
+  <form
+    className=""
+    noValidate={true}
+  >
+    <div
+      className="form-row"
+    >
+      <div
+        className="form-group col-md-5 offset-md-3"
+      >
+        <label
+          className="text-center form-label"
+          htmlFor="validationCustom01"
+        >
+          <b>
+            Enter Email
+          </b>
+        </label>
+        <input
+          className="text-center form-control"
+          id="validationCustom01"
+          onChange={[Function]}
+          placeholder="Email"
+          required={true}
+          style={
+            Object {
+              "width": "100%",
+            }
+          }
+          type="email"
+        />
+        <div
+          className="valid-feedback"
+        >
+          Looks good!
+        </div>
+      </div>
+    </div>
+    <div
+      className="form-row"
+    >
+      <div
+        className="form-group col-md-5 offset-md-3"
+      >
+        <label
+          className="text-center form-label"
+          htmlFor="validationCustom02"
+        >
+          <b>
+            Enter Password
+          </b>
+        </label>
+        <input
+          className="text-center form-control"
+          id="validationCustom02"
+          onChange={[Function]}
+          placeholder="Password"
+          required={true}
+          style={
+            Object {
+              "width": "100%",
+            }
+          }
+          type="password"
+        />
+        <div
+          className="valid-feedback"
+        >
+          Looks good!
+        </div>
+      </div>
+    </div>
+    <div
+      className="form-row"
+    >
+      <div
+        className="form-group col-md-5 offset-md-3"
+      >
+        <button
+          className="button-settleup btn btn-primary"
+          data-testid="Login"
+          disabled={false}
+          onClick={[Function]}
+          type="submit"
+        >
+          LOGIN
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+`;

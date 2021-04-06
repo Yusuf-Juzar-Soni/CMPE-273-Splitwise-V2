@@ -1,0 +1,257 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders 1`] = `
+<div
+  className="dashboard"
+>
+  <div>
+    <div>
+      <nav
+        className="navbar navbar-expand-lg navbar-light bg-success"
+      >
+        <a
+          className="navbar-brand"
+          href="#home"
+        >
+          <img
+            height="50"
+            src="login_logo.png"
+            width="50"
+          />
+        </a>
+        <div
+          className="mr-auto navbar-nav"
+          onKeyDown={[Function]}
+        >
+          <a
+            className="nav-link"
+            data-rb-event-key="#home"
+            href="#home"
+            onClick={[Function]}
+            onKeyDown={[Function]}
+          />
+        </div>
+        <div
+          className="dropdown"
+        >
+          <button
+            aria-expanded={false}
+            aria-haspopup={true}
+            className="dtoggle dropdown-toggle btn btn-info"
+            disabled={false}
+            id="dropdown-basic"
+            onClick={[Function]}
+            type="button"
+          >
+            
+          </button>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <h4
+    data-testid="Dashboard"
+  >
+    Dashboard
+  </h4>
+  <div
+    className="row"
+  >
+    <div
+      className="col-md-2"
+      div={true}
+    >
+      <div>
+        <div>
+          <div
+            className="flex-column nav"
+            color="red"
+            onKeyDown={[Function]}
+          >
+            <a
+              className="nav-link"
+              data-rb-event-key={null}
+              href="#"
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              role="button"
+            >
+              Dashboard
+            </a>
+            <a
+              className="nav-link"
+              data-rb-event-key={null}
+              data-testid="Activity"
+              href="#"
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              role="button"
+            >
+              Activity
+            </a>
+            <a
+              className="nav-link"
+              data-rb-event-key={null}
+              href="#"
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              role="button"
+            >
+              Groups
+            </a>
+            <input
+              onChange={[Function]}
+              type="text"
+            />
+            <div
+              className="list-group-design list-group"
+              onKeyDown={[Function]}
+            />
+            <a
+              className="nav-link"
+              data-rb-event-key={null}
+              href="#"
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              role="button"
+            >
+              Create Group
+            </a>
+            <a
+              className="nav-link"
+              data-rb-event-key={null}
+              href="#"
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              role="button"
+            >
+              Invite List
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="col-md-10"
+      div={true}
+    >
+      <div>
+        <div
+          className="row"
+        >
+          <div
+            className="row"
+          >
+            <div
+              className="col-md-12"
+            >
+              <button
+                className="button-settleup btn btn-primary btn-sm"
+                data-testid="Settle Up"
+                disabled={false}
+                onClick={[Function]}
+                type="button"
+              >
+                Settle Up
+              </button>
+              <button
+                className="button-creategroup btn btn-primary btn-sm"
+                disabled={false}
+                onClick={[Function]}
+                type="button"
+              >
+                Create Group
+              </button>
+            </div>
+          </div>
+        </div>
+        <br />
+        <br />
+        <div
+          className="row"
+        />
+        <div
+          class="row justify-content-center"
+        >
+          <title>
+            Welcome to Dashboard
+          </title>
+          <h4>
+            Welcome to Dashboard
+          </h4>
+        </div>
+        <div
+          className="row mt-2"
+        >
+          <div
+            className="col-md-4"
+          >
+            <b>
+              YOU OWE: $
+              0
+            </b>
+          </div>
+          <div
+            className="col-md-4"
+          >
+            <b>
+              YOU ARE OWED: $
+              0
+            </b>
+          </div>
+          <div
+            className="col-md-4"
+          >
+            <b>
+              BALANCE: $
+              0
+            </b>
+          </div>
+        </div>
+        <div
+          className="show-grid"
+        >
+          <div
+            className="row mt-4"
+          >
+            <div
+              className="col-md-6"
+            >
+              <p>
+                <center>
+                  <b>
+                    <u>
+                      YOU OWE
+                    </u>
+                  </b>
+                </center>
+              </p>
+              <div
+                className="list-group"
+                onKeyDown={[Function]}
+              />
+            </div>
+            <div
+              className="col-md-6"
+            >
+              <p>
+                <center>
+                  <b>
+                    <u>
+                      YOU ARE OWED
+                    </u>
+                  </b>
+                </center>
+              </p>
+              <div
+                className="list-group"
+                onKeyDown={[Function]}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
