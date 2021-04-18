@@ -20,7 +20,7 @@ function DashboardInfo() {
   const location = useLocation();
   const parsed = queryString.parse(location.search);
   const email = parsed.email;
-
+  const token = localStorage.getItem("token");
   const [amounts, setFinalAmounts] = useState([" "]);
   const [owe, setOwe] = useState([]);
   const [owed, setOwed] = useState([]);
@@ -36,7 +36,15 @@ function DashboardInfo() {
   useEffect(() => {
     console.log();
 
-    Axios.get(`${backendServer}/amount/` + email).then((response) => {
+    Axios.post(
+      `${backendServer}/amount`,
+      { user: email },
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      }
+    ).then((response) => {
       console.log(response);
       setFinalAmounts(response.data);
       setSplit(response.data);
@@ -128,11 +136,19 @@ function DashboardInfo() {
   // };
 
   const SettleUp1 = (email, senderemail, amount) => {
-    Axios.post(`${backendServer}/settleUpOwe`, {
-      user: email,
-      sender: senderemail,
-      amt: amount,
-    })
+    Axios.post(
+      `${backendServer}/settleUpOwe`,
+      {
+        user: email,
+        sender: senderemail,
+        amt: amount,
+      },
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      }
+    )
       .then((response) => {
         if (response.status == 200) {
           console.log(response.data);
@@ -145,11 +161,19 @@ function DashboardInfo() {
   };
 
   const SettleUp2 = (email, senderemail, amount) => {
-    Axios.post(`${backendServer}/settleUpOwed`, {
-      user: email,
-      sender: senderemail,
-      amount: amount,
-    })
+    Axios.post(
+      `${backendServer}/settleUpOwed`,
+      {
+        user: email,
+        sender: senderemail,
+        amount: amount,
+      },
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      }
+    )
       .then((response) => {
         if (response.status == 200) {
           console.log(response.data);

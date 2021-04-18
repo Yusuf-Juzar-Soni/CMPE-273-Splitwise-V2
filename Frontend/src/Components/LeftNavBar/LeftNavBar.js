@@ -21,7 +21,7 @@ import backendServer from "../../webConfig";
 function LeftNavBar() {
   const history = useHistory();
   const emailID = useSelector((state) => state.isLogged.email);
-
+  const token = localStorage.getItem("token");
   const [group_names, group_namesChange] = useState([]);
   const [change, setHandleChange] = useState(false);
   const [list, setListDisplay] = useState([]);
@@ -30,10 +30,14 @@ function LeftNavBar() {
   function retriveGroups(user_email1) {
     const user_email = { email: user_email1 };
     axios
-      .post(`${backendServer}/dashboard`, user_email)
+      .post(`${backendServer}/getGroups`, user_email, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      })
       .then((response) => {
-        console.log(response.data);
-        group_namesChange(response.data);
+        console.log(response.data[0].groupsPartOf);
+        group_namesChange(response.data[0].groupsPartOf);
         console.log(group_names);
       })
       .catch((err) => {

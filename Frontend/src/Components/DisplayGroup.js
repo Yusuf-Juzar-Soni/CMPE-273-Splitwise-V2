@@ -18,6 +18,7 @@ import {
   ListGroup,
   Modal,
   Form,
+  Accordion,
 } from "react-bootstrap";
 
 function DisplayGroup() {
@@ -31,6 +32,7 @@ function DisplayGroup() {
   const groupName = parsed.groupname;
   console.log(email);
   console.log(groupName);
+  const token = localStorage.getItem("token");
   const [member_names, setMembers] = useState([]);
 
   const [show, setShow] = useState(false);
@@ -38,8 +40,10 @@ function DisplayGroup() {
   const [amount, setAmount] = useState(0);
   const [description, setDescription] = useState("");
   const [bills, setBills] = useState([]);
+  const [comments, setComments] = useState([]);
   const [alert, setAlert] = useState("");
   const [message, setMessage] = useState("");
+
   const no_of_members = member_names.length;
   console.log("No.of Members", no_of_members);
 
@@ -56,14 +60,22 @@ function DisplayGroup() {
     AddBill(email, groupName, no_of_members);
   };
 
-  const AddBill = (email, group,membercount) => {
-    Axios.post(`${backendServer}/addBill`, {
-      user: email,
-      billData: description,
-      amount: amount,
-      group: group,
-      members: member_names,
-    })
+  const AddBill = (email, group, membercount) => {
+    Axios.post(
+      `${backendServer}/createBill`,
+      {
+        user_email: email,
+        desc: description,
+        bill_amt: amount,
+        group_name: group,
+        members: member_names,
+      },
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      }
+    )
       .then((response) => {
         console.log(response.data);
         fetchBills(group).then((result) => {
@@ -80,7 +92,15 @@ function DisplayGroup() {
 
   function fetchBills(group) {
     return new Promise((resolve, reject) => {
-      Axios.get(`${backendServer}/fetchBills/` + group)
+      Axios.post(
+        `${backendServer}/getAllBills`,
+        { g_name: group },
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+        }
+      )
         .then((response) => {
           console.log(response.data);
           resolve(response.data);
@@ -91,26 +111,50 @@ function DisplayGroup() {
     });
   }
 
-  const handleLeaveGroup = () => {
-    console.log("inside caller function", owe);
-    console.log("inside caller function 1", owed);
-    if (owe === 0 && owed === 0) {
-      console.log("inside caller if");
-      LeaveGroup(parsed.email, groupName);
-    } else {
-      setAlert("Unable to leave group as dues pending");
-    }
-  };
+  // const handleLeaveGroup = () => {
+  //   console.log("inside caller function", owe);
+  //   console.log("inside caller function 1", owed);
+  //   if (owe === 0 && owed === 0) {
+  //     console.log("inside caller if");
+  //     LeaveGroup(parsed.email, groupName);
+  //   } else {
+  //     setAlert("Unable to leave group as dues pending");
+  //   }
+  // };
 
-  const LeaveGroup = (u_email, groupname) => {
-    Axios.post(`${backendServer}/leaveGroup`, {
-      user: u_email,
-      group: groupname,
-    })
+  // const LeaveGroup = (u_email, groupname) => {
+  //   Axios.post(`${backendServer}/leaveGroup`, {
+  //     user: u_email,
+  //     group: groupname,
+  //   })
+  //     .then((response) => {
+  //       if (response.status == 200) {
+  //         console.log(response.data);
+  //         setMessage("Successfully Left Group");
+  //       }
+  //     })
+  //     .catch((e) => {
+  //       console.log(e);
+  //     });
+  // };
+
+  const handleGetComment = (billid) => {
+    Axios.post(
+      `${backendServer}/getComments`,
+      {
+        bill_id: billid,
+      },
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      }
+    )
       .then((response) => {
         if (response.status == 200) {
           console.log(response.data);
-          setMessage("Successfully Left Group");
+          setComments(response.data);
+          setMessage("Successfully FetchedComments");
         }
       })
       .catch((e) => {
@@ -121,14 +165,22 @@ function DisplayGroup() {
   const handleShow = () => setShow(true);
 
   useEffect(() => {
-    Axios.post(`${backendServer}/allMembers`, {
-      groupname: groupName,
-      email: email,
-    })
+    Axios.post(
+      `${backendServer}/getAllMembers`,
+      {
+        g_name: groupName,
+        email: email,
+      },
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      }
+    )
       .then((response) => {
-        console.log(response);
+        console.log(response.data[0].members);
 
-        setMembers(response.data);
+        setMembers(response.data[0].members);
       })
       .catch((e) => {
         console.log(e);
@@ -179,7 +231,7 @@ function DisplayGroup() {
                     <ListGroup>
                       {member_names.map((item) => (
                         <ListGroup.Item variant="light">
-                          <b>{item.user_email}</b>
+                          <b>{item}</b>
                         </ListGroup.Item>
                       ))}
                     </ListGroup>
@@ -227,7 +279,75 @@ function DisplayGroup() {
                         </Button>
                       </Modal.Footer>
                     </Modal>
-                    <ListGroup>
+
+                    <Accordion>
+                      {bills.map((bill) => (
+                        // localStorage.setItem(billId,{bill._id})
+                        <Card>
+                          <Card.Header>
+                            <Accordion.Toggle
+                              as={Button}
+                              variant="link"
+                              eventKey={bill._id}
+                              onClick={(e) => {
+                                handleGetComment(bill._id);
+                              }}
+                            >
+                              <b>
+                                Created By:<i> {bill.created_by}</i>
+                              </b>
+                              <br></br>
+                              <b>
+                                Bill Amount:<i> ${bill.bill_amount}</i>
+                              </b>
+                              <br></br>
+                              <b>
+                                Created On: <i>{bill.created_time}</i>
+                              </b>
+                              <br></br>
+                            </Accordion.Toggle>
+                          </Card.Header>
+                          <Accordion.Collapse eventKey={bill._id}>
+                            <Card.Body>
+                              <ListGroup>
+                                {comments.map((comment) => (
+                                  <ListGroup.Item
+                                    variant="warning"
+                                    className="links-dashboard-groups"
+                                  >
+                                    <b>
+                                      <i> {comment.comment_body}</i>
+                                    </b>
+                                    <br></br>
+                                  </ListGroup.Item>
+                                ))}
+                              </ListGroup>
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="InputUsername"
+                                placeholder="Add Comment "
+                              />
+                              <br></br>
+                              <Button
+                                className="button-close"
+                                onClick={(e) => {
+                                  handleLeaveGroup();
+                                }}
+                              >
+                                Add Comment
+                              </Button>
+                            </Card.Body>
+                          </Accordion.Collapse>
+                        </Card>
+                      ))}
+                    </Accordion>
+
+                    {/* <Accordion.Collapse eventKey="1">
+                          <Card.Body>Hello! I'm another body</Card.Body>
+                        </Accordion.Collapse> */}
+
+                    {/* <ListGroup>
                       {bills.map((bill) => (
                         <ListGroup.Item
                           variant="warning"
@@ -242,12 +362,12 @@ function DisplayGroup() {
                           </b>
                           <br></br>
                           <b>
-                            Created On: <i>{bill.bill_timestamp}</i>
+                            Created On: <i>{bill.created_time}</i>
                           </b>
                           <br></br>
                         </ListGroup.Item>
                       ))}
-                    </ListGroup>
+                    </ListGroup>  */}
                   </div>
                 </div>
               </div>

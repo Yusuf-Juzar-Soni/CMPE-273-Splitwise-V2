@@ -18,6 +18,7 @@ import {
 } from "react-bootstrap";
 
 function Invites() {
+  const token = localStorage.getItem("token");
   const location = useLocation();
   const isLogged = useSelector((state) => state.isLogged.username);
   const history = useHistory();
@@ -43,12 +44,20 @@ function Invites() {
 
   useEffect(() => {
     function getInviteList() {
-      Axios.get(`${backendServer}/getInvites/` + email).then((response) => {
-        console.log(response.data.group_list.length);
-        if (response.data.group_list.length === 0) {
+      Axios.post(
+        `${backendServer}/getAllInvites`,
+        { email: email },
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+        }
+      ).then((response) => {
+        console.log(response.data[0].groupsInvitedTo.length);
+        if (response.data[0].groupsInvitedTo.length === 0) {
           SetInviteMessage("No Invitations at the moment !!!");
         }
-        SetInviteList(response.data.group_list);
+        SetInviteList(response.data[0].groupsInvitedTo);
       });
     }
     getInviteList();
@@ -62,10 +71,18 @@ function Invites() {
     e.preventDefault();
 
     console.log("hello");
-    Axios.post(`${backendServer}/acceptInvite`, {
-      user: email,
-      selectedgroup: selectedgroup,
-    }).then((response) => {
+    Axios.post(
+      `${backendServer}/acceptInvite`,
+      {
+        email: email,
+        groupName: selectedgroup,
+      },
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      }
+    ).then((response) => {
       console.log(response.data);
       setShow(false);
       loadSuccessful(email);

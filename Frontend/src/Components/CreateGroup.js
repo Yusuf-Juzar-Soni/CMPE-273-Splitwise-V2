@@ -41,19 +41,30 @@ function CreateGroup() {
   const [success, setSuccess] = useState("");
   const [emailId, setEmail] = useState([email.email]);
   const isEnabled = group.length > 0;
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     console.log(flag);
     console.log(email.email);
-    Axios.get(`${backendServer}/allUsers/` + email.email)
+    Axios.post(
+      `${backendServer}/getAllUsers`,
+      {
+        email: email.email,
+      },
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      }
+    )
       .then((response) => {
-        console.log(response);
+        console.log(response.data);
         let data = [];
 
         response.data.forEach((e) => {
           data.push({
-            label: e.username + " ( " + e.user_email + " )",
-            value: e.user_email,
+            label: e.name + " ( " + e.email + " )",
+            value: e.email,
           });
           setUsers(data);
         });
@@ -61,7 +72,7 @@ function CreateGroup() {
       .catch((e) => {
         console.log(e);
       });
-    console.log(user);
+    console.log("This is user", user);
   }, []);
 
   // const handleClickDashboard = () => {
@@ -82,11 +93,19 @@ function CreateGroup() {
     let finalMembers = [];
     finalMembers = members.map((member) => member.value);
 
-    Axios.post(`${backendServer}/createGroup`, {
-      groupName: group,
-      user: emailId,
-      members: finalMembers,
-    })
+    Axios.post(
+      `${backendServer}/createGroup`,
+      {
+        groupName: group,
+        user: email.email,
+        members: finalMembers,
+      },
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      }
+    )
       .then((response) => {
         console.log(response);
 

@@ -50,7 +50,7 @@ function Signup() {
     } else {
       if (email.includes("@") && email.includes(".com")) {
         axios
-          .post(`${backendServer}/signup`, {
+          .post(`${backendServer}/register`, {
             name,
             email,
             password,

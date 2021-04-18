@@ -51,28 +51,23 @@ function Login() {
           password,
         })
         .then((response) => {
-          localStorage.setItem("username", response.data.result[0].username);
-          localStorage.setItem("useremail", response.data.result[0].user_email);
-          console.log(response.data.result[0]);
-          console.log(response.data.result[0].username);
-          console.log(response.data.result[0].user_email);
+          localStorage.setItem("username", response.data.name);
+          localStorage.setItem("useremail", response.data.email);
+          localStorage.setItem("token", response.data.token);
+          console.log(response.data);
+          console.log(response.data.name);
+          console.log(response.data.email);
           loadSuccessful();
-          handleClick(response.data.result[0].user_email);
-          dispatch(
-            logged(
-              response.data.result[0].username,
-              response.data.result[0].user_email
-            )
-          );
+          handleClick(response.data.email);
+          dispatch(logged(response.data.name, response.data.email));
         })
         .catch((err) => {
           if (err.response) {
             alert(err.response.data.message);
           }
         });
-    }
-    else{
-      alert("Email format wrong")
+    } else {
+      alert("Email format wrong");
     }
   };
 

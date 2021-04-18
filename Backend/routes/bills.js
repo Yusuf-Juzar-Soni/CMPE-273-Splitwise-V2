@@ -20,6 +20,7 @@ router.post(
     const { user_email, group_name, bill_amt, desc, members } = req.body;
     console.log("This is members", members);
     const split = bill_amt / members.length;
+    
 
     let i;
     const newBill = new Bill({

@@ -28,13 +28,7 @@ const getAmount = (s_email, r_email) => {
         },
       ],
       function (err, result) {
-        console.log("result.total", result[0].total);
-        if (result[0].total === "") {
-          result[0].total = 0;
-          resolve(result);
-        } else {
-          resolve(result);
-        }
+        resolve(result);
       }
     );
   });
@@ -112,7 +106,7 @@ async function fetchResultIOwe(user) {
     }
 
     let transactionObj = {
-      amount: sentAmount - recievedAmount,
+      amt: sentAmount - recievedAmount,
       email: email,
     };
     transactions.push(transactionObj);
@@ -141,9 +135,9 @@ router.post(
   "/settleUpOwe",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    const { user, sender, amount } = req.body;
+    const { user, sender, amt } = req.body;
     let NewTransaction = new Transaction({
-      transaction_amount: amount,
+      transaction_amount: amt,
       sender: user,
       receiver: sender,
     });
@@ -160,9 +154,9 @@ router.post(
   "/settleUpOwed",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    const { user, sender, amount } = req.body;
+    const { user, sender, amt } = req.body;
     let NewTransaction = new Transaction({
-      transaction_amount: amount,
+      transaction_amount: amt,
       sender: sender,
       receiver: user,
     });

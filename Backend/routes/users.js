@@ -71,38 +71,42 @@ router.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  // Find user by email
-  User.findOne({ email }).then((user) => {
-    // Check for user
-    if (!user) {
-      errors.email = "User not found";
-      return res.status(404).json(errors);
-    }
-
-    // Check Password
-    bcrypt.compare(password, user.password).then((isMatch) => {
-      if (isMatch) {
-        // User Matched
-        const payload = { id: user.id, name: user.name, email: user.email }; // Create JWT Payload
-
-        // Sign Token
-        jwt.sign(
-          payload,
-          keys.secretOrKey,
-          { expiresIn: 35000 },
-          (err, token) => {
-            res.json({
-              success: true,
-              token: "Bearer " + token,
-            });
-          }
-        );
-      } else {
-        errors.password = "Password incorrect";
-        return res.status(400).json(errors);
+  console.log(email);
+  console.log(password),
+    // Find user by email
+    User.findOne({ email }).then((user) => {
+      // Check for user
+      if (!user) {
+        errors.email = "User not found";
+        return res.status(404).json(errors);
       }
+
+      // Check Password
+      bcrypt.compare(password, user.password).then((isMatch) => {
+        if (isMatch) {
+          // User Matched
+          const payload = { id: user.id, name: user.name, email: user.email }; // Create JWT Payload
+
+          // Sign Token
+          jwt.sign(
+            payload,
+            keys.secretOrKey,
+            { expiresIn: 35000 },
+            (err, token) => {
+              res.json({
+                success: true,
+                token: "Bearer " + token,
+                email: user.email,
+                name: user.name,
+              });
+            }
+          );
+        } else {
+          errors.password = "Password incorrect";
+          return res.status(400).json(errors);
+        }
+      });
     });
-  });
 });
 
 // @route   GET api/users/current
@@ -157,12 +161,13 @@ router.post(
     const user_email = req.body.email;
     let final_result = [];
     let i;
-    const page = parseInt(req.query.page);
-    const limit = parseInt(req.query.limit);
+    const page = parseInt(req.body.page);
+    const limit = parseInt(req.body.limit);
 
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
     const len = await Bill.countDocuments().exec();
+
     console.log("length of Bills", len);
 
     const results = {};
@@ -202,13 +207,14 @@ router.post(
               bill_amount: 1,
               _id: 0,
             }
-          )
-            .limit(limit)
-            .skip(startIndex)
-            .exec();
-          final_result = list_of_bills;
+          );
+
+          console.log("This is list of bills", list_of_bills);
+          final_result = final_result.concat(list_of_bills);
         }
-        res.status(200).json(final_result);
+        result = final_result.slice(startIndex, endIndex);
+
+        res.status(200).json(result);
       } else {
         res
           .status(400)

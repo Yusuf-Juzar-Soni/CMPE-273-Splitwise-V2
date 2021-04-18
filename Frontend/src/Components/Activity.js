@@ -28,11 +28,53 @@ const Activity = () => {
   const location = useLocation();
   const isLogged = useSelector((state) => state.isLogged.username);
   const [activity, setActivity] = useState([]);
+  const [pageCount, setPages] = useState(1);
   const parsed = queryString.parse(location.search);
   const email = parsed.email;
+  let arrayOfPages = [];
+  const token = localStorage.getItem("token");
+  let lengthOfResponse = 0;
+  const limit = 3;
+
+  for (let i = 1; i <= 5; i++) {
+    arrayOfPages[i] = i;
+  }
+
+  const setSelectChange = (e) => {
+    console.log("In select change", e.target.value);
+    setPages(e.target.value);
+
+    console.log(setPages);
+    Axios.post(
+      `${backendServer}/getActivity`,
+      { email: email, page: pageCount, limit: limit },
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      }
+    )
+      .then((response) => {
+        console.log(response.data);
+
+        setActivity(response.data);
+        // console.log(activity);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
 
   useEffect(() => {
-    Axios.get(`${backendServer}/Activity/` + email)
+    Axios.post(
+      `${backendServer}/getActivity`,
+      { email: email, page: pageCount, limit: limit },
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      }
+    )
       .then((response) => {
         console.log(response);
         setActivity(response.data);
@@ -63,16 +105,34 @@ const Activity = () => {
                     variant="info"
                     // key={bill.amount}
                     className="links-acttivity-groups"
+                    key={activity.created_time}
                   >
                     <b>{activity.created_by}</b> &nbsp;paid&nbsp;{" "}
                     <b>{activity.bill_amount}</b>
-                    &nbsp; in &nbsp; <b>{activity.bill_group}</b>&nbsp;for&nbsp;
+                    &nbsp; in &nbsp; <b>{activity.created_in}</b>&nbsp;for&nbsp;
                     <b>{activity.bill_desc}</b>&nbsp;on&nbsp;
-                    <b>{activity.bill_timestamp}</b>
+                    <b>{activity.created_time}</b>
                     <br></br>
                   </ListGroup.Item>
                 ))}
               </ListGroup>
+              <div className="form-group Login">
+                <label for="Pagination">
+                  <b>Select Page</b>
+                </label>
+                <select
+                  onChange={(e) => {
+                    setSelectChange(e);
+                  }}
+                  id="page"
+                  name="page"
+                  class="form-control"
+                >
+                  {arrayOfPages.map((item) => (
+                    <option value={item}>{item}</option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
         </div>
