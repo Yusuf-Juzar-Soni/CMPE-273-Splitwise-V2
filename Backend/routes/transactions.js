@@ -69,7 +69,7 @@ let getGroups = (user) => {
 };
 
 async function fetchResultIOwe(user) {
-  let result = [];
+  let transactions = [];
   let stringGroups = await getGroups(user);
   console.log("in fetch results function", stringGroups);
 
@@ -95,12 +95,30 @@ async function fetchResultIOwe(user) {
     console.log("this is sent", sent);
     let recieved = await getAmount(email, user);
     console.log("this is received", recieved);
-    
-    let diff = sent[0].total - recieved[0].total;
-    result.push({ email: email, amt: diff });
+
+    sentAmount = 0;
+    recievedAmount = 0;
+
+    if (sent.length == 0) {
+      sentAmount = 0;
+    } else {
+      sentAmount = sent[0].total;
+    }
+
+    if (recieved.length == 0) {
+      recievedAmount = 0;
+    } else {
+      recievedAmount = recieved[0].total;
+    }
+
+    let transactionObj = {
+      amount: sentAmount - recievedAmount,
+      email: email,
+    };
+    transactions.push(transactionObj);
   }
-  console.log(result);
-  return result;
+  console.log(transactions);
+  return transactions;
 }
 router.post(
   "/amount",
@@ -116,6 +134,44 @@ router.post(
         //need to add error handling
         console.log(err);
       });
+  }
+);
+
+router.post(
+  "/settleUpOwe",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const { user, sender, amount } = req.body;
+    let NewTransaction = new Transaction({
+      transaction_amount: amount,
+      sender: user,
+      receiver: sender,
+    });
+
+    let transaction = await NewTransaction.save();
+    if (transaction) {
+      console.log(transaction);
+    }
+    res.status(200).json({ message: "SettleUpOwe Transaction Added" });
+  }
+);
+
+router.post(
+  "/settleUpOwed",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const { user, sender, amount } = req.body;
+    let NewTransaction = new Transaction({
+      transaction_amount: amount,
+      sender: sender,
+      receiver: user,
+    });
+
+    let transaction = await NewTransaction.save();
+    if (transaction) {
+      console.log(transaction);
+    }
+    res.status(200).json({ message: "SettleUpOwed Transaction Added" });
   }
 );
 

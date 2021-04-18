@@ -162,6 +162,8 @@ router.post(
 
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
+    const len = await Bill.countDocuments().exec();
+    console.log("length of Bills", len);
 
     const results = {};
 
@@ -213,6 +215,82 @@ router.post(
           .json({ message: "Error has occured, bills could not be displayed" });
       }
     });
+  }
+);
+
+router.post(
+  "/getGroups",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const user = req.body.email;
+    console.log(user);
+    await User.find(
+      { email: user },
+      {
+        groupsPartOf: 1,
+        _id: 0,
+      }
+    ).then((groups) => {
+      if (groups) {
+        console.log("This is groups user is part of", groups);
+        res.status(200).json(groups);
+      } else {
+        res.status(400).json({
+          message: "Error has occured, groups could not be displayed",
+        });
+      }
+    });
+  }
+);
+
+router.post(
+  "/getProfile",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const user = req.body.email;
+    console.log(user);
+    await User.find(
+      { email: user },
+      {
+        name: 1,
+        phonenumber: 1,
+        currency: 1,
+        timezone: 1,
+        language: 1,
+        photostring: 1,
+        _id: 0,
+      }
+    ).then((groups) => {
+      if (groups) {
+        console.log("This is profile of  user ", groups);
+        res.status(200).json(groups);
+      } else {
+        res.status(400).json({
+          message: "Error has occured, profile could not be displayed",
+        });
+      }
+    });
+  }
+);
+
+router.post(
+  "/getAllUsers",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const email = req.body.email;
+    console.log(email);
+    User.find({ email: { $nin: email } }, { name: 1, email: 1, _id: 0 }).then(
+      (users) => {
+        if (users) {
+          console.log("This is members", users);
+          res.status(200).json(users);
+        } else {
+          res.status(400).json({
+            message: "Error has occured, users could not be displayed",
+          });
+        }
+      }
+    );
   }
 );
 
