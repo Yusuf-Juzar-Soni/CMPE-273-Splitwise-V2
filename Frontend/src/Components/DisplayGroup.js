@@ -34,8 +34,9 @@ function DisplayGroup() {
   console.log(groupName);
   const token = localStorage.getItem("token");
   const [member_names, setMembers] = useState([]);
-
+  const [comment_body, setCommentBody] = useState("");
   const [show, setShow] = useState(false);
+  const [vis, setVis] = useState(false);
   const [groups, setGroups] = useState([]);
   const [amount, setAmount] = useState(0);
   const [description, setDescription] = useState("");
@@ -43,6 +44,7 @@ function DisplayGroup() {
   const [comments, setComments] = useState([]);
   const [alert, setAlert] = useState("");
   const [message, setMessage] = useState("");
+  const [commenter, setCommenter] = useState("");
 
   const no_of_members = member_names.length;
   console.log("No.of Members", no_of_members);
@@ -51,9 +53,29 @@ function DisplayGroup() {
   const owed = parseInt(localStorage.getItem("OwedAmount"));
   console.log("On display page", owe);
   console.log("On display Page", owed);
+  let isEnabled = false;
+
+  if (commenter == email) {
+    isEnabled = true;
+  }
+
+  const loadSuccessful = () => {
+    const billid = localStorage.getItem("BillID");
+    handleGetComment(billid);
+  };
+
+  const loadSuccess = (email) => {
+    history.push({
+      pathname: "/dash",
+      search: `?email=${email}`,
+    });
+  };
 
   const handleClose = () => {
     setShow(false);
+  };
+  const handleCross = () => {
+    setVis(false);
   };
 
   const handleSaveChanges = () => {
@@ -111,34 +133,44 @@ function DisplayGroup() {
     });
   }
 
-  // const handleLeaveGroup = () => {
-  //   console.log("inside caller function", owe);
-  //   console.log("inside caller function 1", owed);
-  //   if (owe === 0 && owed === 0) {
-  //     console.log("inside caller if");
-  //     LeaveGroup(parsed.email, groupName);
-  //   } else {
-  //     setAlert("Unable to leave group as dues pending");
-  //   }
-  // };
+  const handleLeaveGroup = () => {
+    console.log("inside caller function", owe);
+    console.log("inside caller function 1", owed);
+    if (owe === 0 && owed === 0) {
+      console.log("inside caller if");
+      LeaveGroup(parsed.email, groupName);
+    } else {
+      setAlert("Unable to leave group as dues pending");
+    }
+  };
 
-  // const LeaveGroup = (u_email, groupname) => {
-  //   Axios.post(`${backendServer}/leaveGroup`, {
-  //     user: u_email,
-  //     group: groupname,
-  //   })
-  //     .then((response) => {
-  //       if (response.status == 200) {
-  //         console.log(response.data);
-  //         setMessage("Successfully Left Group");
-  //       }
-  //     })
-  //     .catch((e) => {
-  //       console.log(e);
-  //     });
-  // };
+  const LeaveGroup = (u_email, groupname) => {
+    Axios.post(
+      `${backendServer}/leaveGroup`,
+      {
+        email: u_email,
+        groupName: groupname,
+      },
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      }
+    )
+      .then((response) => {
+        if (response.status == 200) {
+          console.log(response.data);
+          setMessage("Successfully Left Group");
+          loadSuccess(email);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
 
   const handleGetComment = (billid) => {
+    localStorage.setItem("BillID", billid);
     Axios.post(
       `${backendServer}/getComments`,
       {
@@ -154,7 +186,58 @@ function DisplayGroup() {
         if (response.status == 200) {
           console.log(response.data);
           setComments(response.data);
-          setMessage("Successfully FetchedComments");
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const handleDelete = (commentid) => {
+    Axios.post(
+      `${backendServer}/deleteComment`,
+      {
+        comment_id: commentid,
+      },
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      }
+    )
+      .then((response) => {
+        if (response.status == 200) {
+          console.log(response.data);
+
+          setVis(false);
+          loadSuccessful();
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const handleAddComment = (billid) => {
+    Axios.post(
+      `${backendServer}/createComment`,
+      {
+        user_email: email,
+        c_body: comment_body,
+        bill: billid,
+      },
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      }
+    )
+      .then((response) => {
+        if (response.status == 200) {
+          console.log(response.data);
+
+          setVis(false);
+          loadSuccessful();
         }
       })
       .catch((e) => {
@@ -163,7 +246,10 @@ function DisplayGroup() {
   };
 
   const handleShow = () => setShow(true);
-
+  const handleVis = (commenter) => {
+    setVis(true);
+    setCommenter(commenter);
+  };
   useEffect(() => {
     Axios.post(
       `${backendServer}/getAllMembers`,
@@ -316,9 +402,41 @@ function DisplayGroup() {
                                     className="links-dashboard-groups"
                                   >
                                     <b>
-                                      <i> {comment.comment_body}</i>
+                                      <i>{comment.commented_by}:=</i>
                                     </b>
+                                    <i> {comment.comment_body}</i>
+                                    <Button
+                                      className="button-settleup"
+                                      onClick={(e) =>
+                                        handleVis(comment.commented_by)
+                                      }
+                                    >
+                                      Delete
+                                    </Button>
                                     <br></br>
+                                    <Modal show={vis} onHide={handleCross}>
+                                      <Modal.Header closeButton>
+                                        <Modal.Title>
+                                          Delete Confirmation
+                                        </Modal.Title>
+                                      </Modal.Header>
+                                      <Modal.Body>
+                                        Are you sure you want to delete this
+                                        comment
+                                      </Modal.Body>
+                                      <Modal.Footer>
+                                        <Button
+                                          disabled={!isEnabled}
+                                          className="button-close"
+                                          type="submit"
+                                          onClick={(e) =>
+                                            handleDelete(comment._id)
+                                          }
+                                        >
+                                          Delete
+                                        </Button>
+                                      </Modal.Footer>
+                                    </Modal>
                                   </ListGroup.Item>
                                 ))}
                               </ListGroup>
@@ -327,12 +445,15 @@ function DisplayGroup() {
                                 class="form-control"
                                 id="InputUsername"
                                 placeholder="Add Comment "
+                                onChange={(e) => {
+                                  setCommentBody(e.target.value);
+                                }}
                               />
                               <br></br>
                               <Button
                                 className="button-close"
                                 onClick={(e) => {
-                                  handleLeaveGroup();
+                                  handleAddComment(bill._id);
                                 }}
                               >
                                 Add Comment

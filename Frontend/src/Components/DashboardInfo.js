@@ -53,6 +53,13 @@ function DashboardInfo() {
     console.log(amounts);
   }, [location]);
 
+  const loadSuccess = (email) => {
+    history.push({
+      pathname: "/dash",
+      search: `?email=${email}`,
+    });
+  };
+
   const setSplit = (amounts1) => {
     console.log(amounts1);
 
@@ -166,7 +173,7 @@ function DashboardInfo() {
       {
         user: email,
         sender: senderemail,
-        amount: amount,
+        amt: amount,
       },
       {
         headers: {

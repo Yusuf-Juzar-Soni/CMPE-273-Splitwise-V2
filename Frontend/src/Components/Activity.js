@@ -29,11 +29,12 @@ const Activity = () => {
   const isLogged = useSelector((state) => state.isLogged.username);
   const [activity, setActivity] = useState([]);
   const [pageCount, setPages] = useState(1);
+  const [entries, setSelectEntries] = useState(2);
   const parsed = queryString.parse(location.search);
   const email = parsed.email;
   let arrayOfPages = [];
   const token = localStorage.getItem("token");
-  let lengthOfResponse = 0;
+  // let lengthOfResponse = 0;
   const limit = 3;
 
   for (let i = 1; i <= 5; i++) {
@@ -47,7 +48,7 @@ const Activity = () => {
     console.log(setPages);
     Axios.post(
       `${backendServer}/getActivity`,
-      { email: email, page: pageCount, limit: limit },
+      { email: email, page: pageCount, limit: entries },
       {
         headers: {
           Authorization: `${token}`,
@@ -68,7 +69,7 @@ const Activity = () => {
   useEffect(() => {
     Axios.post(
       `${backendServer}/getActivity`,
-      { email: email, page: pageCount, limit: limit },
+      { email: email, page: pageCount, limit: entries },
       {
         headers: {
           Authorization: `${token}`,
@@ -99,23 +100,6 @@ const Activity = () => {
           <br></br>
           <div className="row ml-1">
             <div className="col-sm-12">
-              <ListGroup variant="flush">
-                {activity.map((activity) => (
-                  <ListGroup.Item
-                    variant="info"
-                    // key={bill.amount}
-                    className="links-acttivity-groups"
-                    key={activity.created_time}
-                  >
-                    <b>{activity.created_by}</b> &nbsp;paid&nbsp;{" "}
-                    <b>{activity.bill_amount}</b>
-                    &nbsp; in &nbsp; <b>{activity.created_in}</b>&nbsp;for&nbsp;
-                    <b>{activity.bill_desc}</b>&nbsp;on&nbsp;
-                    <b>{activity.created_time}</b>
-                    <br></br>
-                  </ListGroup.Item>
-                ))}
-              </ListGroup>
               <div className="form-group Login">
                 <label for="Pagination">
                   <b>Select Page</b>
@@ -133,6 +117,40 @@ const Activity = () => {
                   ))}
                 </select>
               </div>
+              <div className="form-group Login">
+                <label for="NumberOfEntries">
+                  <b>Select Number of Entries</b>
+                </label>
+                <select
+                  onChange={(e) => {
+                    setSelectEntries(e.target.value);
+                  }}
+                  id="entries"
+                  name="entries"
+                  class="form-control"
+                >
+                  <option value="2">2</option>
+                  <option value="5">5</option>
+                  <option value="2">10</option>
+                </select>
+              </div>
+              <ListGroup variant="flush">
+                {activity.map((activity) => (
+                  <ListGroup.Item
+                    variant="info"
+                    // key={bill.amount}
+                    className="links-acttivity-groups"
+                    key={activity.created_time}
+                  >
+                    <b>{activity.created_by}</b> &nbsp;paid&nbsp;{" "}
+                    <b>{activity.bill_amount}</b>
+                    &nbsp; in &nbsp; <b>{activity.created_in}</b>&nbsp;for&nbsp;
+                    <b>{activity.bill_desc}</b>&nbsp;on&nbsp;
+                    <b>{activity.created_time}</b>
+                    <br></br>
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
             </div>
           </div>
         </div>

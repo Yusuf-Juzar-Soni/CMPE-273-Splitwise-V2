@@ -60,7 +60,7 @@ router.post(
 
     await Comment.find(
       { bill_id: billId },
-      { comment_body: 1, commented_by: 1, _id: 0 }
+      { comment_body: 1, commented_by: 1, _id: 1 }
     ).then((comments) => {
       if (comments) {
         res.status(200).json(comments);

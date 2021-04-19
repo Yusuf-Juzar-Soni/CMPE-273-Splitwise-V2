@@ -95,4 +95,64 @@ router.post(
   }
 );
 
+const updateGroup = (g_name, email) => {
+  return new Promise((resolve, reject) => {
+    User.findOne({ email }).then((user) => {
+      console.log("This is user in updateGroup", user);
+      Group.findOneAndUpdate(
+        { group_name: g_name },
+        { $pull: { members: email } }
+      ).then((result) => {
+        if (result) {
+          /// need to add better error handling
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      });
+    });
+  });
+};
+const updateUser = (g_name, email) => {
+  return new Promise((resolve, reject) => {
+    User.findOne({ email }).then((user) => {
+      console.log("This is user in leavegroupUser", g_name);
+      User.findOneAndUpdate(
+        { email: email },
+        { $pull: { groupsPartOf: g_name } }
+      ).then((result) => {
+        if (result) {
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      });
+    });
+  });
+};
+
+router.post(
+  "/leaveGroup",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const g_name = req.body.groupName;
+    const email = req.body.email;
+    console.log(g_name);
+    console.log(email);
+    updateUser(g_name, email).then((result) => {
+      if (result) {
+        console.log("In result", result);
+        updateGroup(g_name, email).then((response) => {
+          console.log("in response", response);
+          if (response) {
+            res.status(200).json({ message: "Left Group  successfully" });
+          } else {
+            res.status(400).json({ message: "CAnt Leave Group accepted" });
+          }
+        });
+      }
+    });
+  }
+);
+
 module.exports = router;
