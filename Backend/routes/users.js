@@ -6,6 +6,8 @@ const jwt = require("jsonwebtoken");
 const keys = require("../config/keys");
 const passport = require("passport");
 const Bill = require("../models/Bill");
+var kafka = require("../kafka/client");
+
 app.use(express.json());
 
 // Load Input Validation
@@ -228,22 +230,17 @@ router.post(
   "/getGroups",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    const user = req.body.email;
-    console.log(user);
-    await User.find(
-      { email: user },
-      {
-        groupsPartOf: 1,
-        _id: 0,
-      }
-    ).then((groups) => {
-      if (groups) {
-        console.log("This is groups user is part of", groups);
-        res.status(200).json(groups);
-      } else {
-        res.status(400).json({
-          message: "Error has occured, groups could not be displayed",
+    kafka.make_request("getGroups", req.body, function (err, results) {
+      console.log("in result");
+      console.log("results in my getgroups ", results);
+      if (err) {
+        console.log("Inside err");
+        res.json({
+          status: "error",
+          msg: "Could not fetch groups, Try Again.",
         });
+      } else {
+        res.send(JSON.stringify(results));
       }
     });
   }
@@ -259,12 +256,46 @@ router.post(
       { email: user },
       {
         name: 1,
+        email: 1,
         phonenumber: 1,
         currency: 1,
         timezone: 1,
         language: 1,
         photostring: 1,
         _id: 0,
+      }
+    ).then((groups) => {
+      if (groups) {
+        console.log("This is profile of  user ", groups);
+        res.status(200).json(groups);
+      } else {
+        res.status(400).json({
+          message: "Error has occured, profile could not be displayed",
+        });
+      }
+    });
+  }
+);
+
+router.post(
+  "/updateProfile",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const email = req.body.email;
+    const name = req.body.name;
+    const phonenumber = req.body.phonenuber;
+    const currency = req.body.currency;
+    const time = req.body.timezone;
+
+    await User.updateOne(
+      { email: email },
+      {
+        $set: {
+          name: name,
+          phonenumber: phonenumber,
+          currency: currency,
+          timezone: time,
+        },
       }
     ).then((groups) => {
       if (groups) {

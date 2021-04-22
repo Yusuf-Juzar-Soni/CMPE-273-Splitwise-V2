@@ -8,27 +8,48 @@ const Group = require("../models/Group");
 const Bill = require("../models/Bill");
 const Transaction = require("../models/Transaction");
 const Comment = require("../models/Comment");
+var kafka = require("../kafka/client");
 //passport config
 require("../config/passport")(passport);
 app.use(express.json());
 app.use(passport.initialize());
 
+// router.post(
+//   "/createComment",
+//   passport.authenticate("jwt", { session: false }),
+//   async (req, res) => {
+//     const { user_email, c_body, bill } = req.body;
+//     const newComment = new Comment({
+//       comment_body: c_body,
+//       commented_by: user_email,
+//       bill_id: bill,
+//     });
+//     console.log("Bill heree", bill);
+//     await newComment.save().then(async (comment) => {
+//       if (comment) {
+//         res.status(200).json({ message: "comment added successfully" });
+//       } else {
+//         res.status(400).json({ message: "failed to add comment" });
+//       }
+//     });
+//   }
+// );
+
 router.post(
   "/createComment",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    const { user_email, c_body, bill } = req.body;
-    const newComment = new Comment({
-      comment_body: c_body,
-      commented_by: user_email,
-      bill_id: bill,
-    });
-    console.log("Bill heree", bill);
-    await newComment.save().then(async (comment) => {
-      if (comment) {
-        res.status(200).json({ message: "comment added successfully" });
+    kafka.make_request("AddComment", req.body, function (err, results) {
+      console.log("in result addcomment");
+      console.log("results in addcomment ", results);
+      if (err) {
+        console.log("Inside err");
+        res.json({
+          status: "error",
+          msg: "Could not add comment, Try Again.",
+        });
       } else {
-        res.status(400).json({ message: "failed to add comment" });
+        res.status(200).json(results);
       }
     });
   }

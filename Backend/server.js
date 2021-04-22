@@ -15,6 +15,7 @@ const invites = require("./routes/invites");
 const bills = require("./routes/bills");
 const comments = require("./routes/comments");
 const transactions = require("./routes/transactions");
+const imageupload=require("./routes/imageupload");
 
 // DB Config
 const db = require("./config/keys").mongoURI;
@@ -41,6 +42,7 @@ app.use(invites);
 app.use(bills);
 app.use(comments);
 app.use(transactions);
+app.use(imageupload);
 
 app.use(
   session({

@@ -35,8 +35,8 @@ const UserSchema = new Schema({
     max: 3,
   },
   timezone: {
-    type: String,
-    default: "(GMT-08:00) Pacific Time (US & Canada)",
+    type: Date,
+    default: Date.now,
   },
   language: {
     type: String,
@@ -45,8 +45,7 @@ const UserSchema = new Schema({
   },
   photostring: {
     type: String,
-    default:
-      "https://splitwiseyusuf123.s3.us-east-2.amazonaws.com/d1b98d2059dc419d2c012cc1cee52154.jpg",
+    default: "default.jpg",
   },
   groupsPartOf: [{ type: String, ref: "Groups" }],
 

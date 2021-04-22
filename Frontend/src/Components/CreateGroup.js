@@ -75,6 +75,13 @@ function CreateGroup() {
     console.log("This is user", user);
   }, []);
 
+  const loadSuccessful = (email) => {
+    history.push({
+      pathname: "/dash",
+      search: `?email=${email}`,
+    });
+  };
+
   // const handleClickDashboard = () => {
   //   history.push({
   //     pathname: "/dash",
@@ -108,8 +115,8 @@ function CreateGroup() {
     )
       .then((response) => {
         console.log(response);
-
         setSuccess("Group Created");
+        loadSuccessful(parsed.email);
       })
       .catch((e) => {
         if (e.response && e.response.data) {

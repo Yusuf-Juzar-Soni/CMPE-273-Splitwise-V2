@@ -32,13 +32,20 @@ function Signup() {
   const dispatch = useDispatch();
 
   const loadSuccessful = () => {
-    history.push("/dash");
+    history.push("/login");
   };
+
+  // const handleClick = (emailId) => {
+  //   history.push({
+  //     pathname: "/dash",
+  //     search: `?email=${emailId}`,
+  //   });
+  // };
 
   const handleClick = (emailId) => {
     history.push({
-      pathname: "/dash",
-      search: `?email=${emailId}`,
+      pathname: "/login",
+      //search: `?email=${emailId}`,
     });
   };
 

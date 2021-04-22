@@ -3,7 +3,7 @@ import backendServer from "../webConfig";
 import { useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 const queryString = require("query-string");
-import Axios from "axios";
+import axios from "axios";
 import TopNavBar from "./TopNavBar";
 
 import LeftNavBar from "./LeftNavBar/LeftNavBar";
@@ -25,22 +25,137 @@ function Profile() {
   const parsed = queryString.parse(location.search);
   const email = parsed.email;
   const [user, setUser] = useState([" "]);
+  const [selectedFile, setFile] = useState();
+  const [amazonurl, setURL] = useState([
+    "https://splitwiseyusuf123.s3.us-east-2.amazonaws.com/d1b98d2059dc419d2c012cc1cee52154.jpg",
+  ]);
+
+  const [name, setName] = useState("");
+  const [currency, setCurrency] = useState("");
+  const [time, setTime] = useState("");
+  const [phone, setPhone] = useState("");
+  const [message, setMessage] = useState("");
+  //change default url
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
     console.log("useEffect called");
-    const getUser = async () => {
-      try {
-        const res = await Axios.post(`${backendServer}/userdetails`, {
-          email: email,
-        });
-        console.log(res.data);
-        setUser(res.data);
-      } catch (e) {
-        console.log(e);
-      }
-    };
     getUser();
+    getImageOnLoad();
     console.log(user);
   }, []);
+
+  const getUser = async () => {
+    try {
+      const res = await axios.post(
+        `${backendServer}/getProfile`,
+        {
+          email: email,
+        },
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+        }
+      );
+      console.log(res.data);
+      setName(res.data[0].name);
+      setCurrency(res.data[0].currency);
+      setPhone(res.data[0].phone);
+      setTime(res.data[0].timezone);
+      setUser(res.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getImageOnLoad = async () => {
+    var data = {
+      useremail: email,
+    };
+
+    await axios
+      .post(`${backendServer}/getimageonload`, data, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          console.log("Got response", res.data.imagelink[0].photostring);
+          setURL(res.data.imagelink[0].photostring);
+        } else {
+          console.log("There was some error!");
+        }
+      });
+  };
+
+  const setDefault = (e) => {
+    setFile(e.target.files[0]);
+    console.log(setFile);
+  };
+
+  const onSave = (e, file) => {
+    const formData = new FormData();
+    console.log("Inside submit data!");
+    console.log("Got state of file:", file);
+    formData.append("file", file);
+    formData.append("useremail", email);
+    axios.post(`${backendServer}/imageupload`, formData).then((res) => {
+      if (res.status === 200) {
+        console.log("Image uploaded on S3!");
+        var data = {
+          useremail: email,
+        };
+        console.log("Got email!", data.useremail);
+        axios
+          .post(`${backendServer}/getimage`, data, {
+            headers: {
+              Authorization: `${token}`,
+            },
+          })
+          .then((res) => {
+            console.log("Inside frontend API!");
+            if (res.status === 200) {
+              console.log("Got response", res.data.imagelink[0].photostring);
+              setURL(res.data.imagelink[0].photostring);
+            } else {
+              console.log("There was some error!");
+            }
+          });
+      } else {
+        console.log("There was some error!");
+      }
+    });
+  };
+
+  const onUpdate = (e) => {
+    axios
+      .post(
+        `${backendServer}/updateProfile`,
+        {
+          name: name,
+          currency: currency,
+          phonenumber: phone,
+          timezone: time,
+          email: email,
+        },
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+        }
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          getUser();
+          console.log("ProfileUpdated");
+          setMessage("Profile Updated");
+        } else {
+          console.log("There was some error!");
+        }
+      });
+  };
 
   return (
     <div>
@@ -61,6 +176,36 @@ function Profile() {
                 >
                   YOUR ACCOUNT
                 </h4>
+                <div className="ImgUpload">
+                  <div className="myImage">
+                    <h5 className="heading">Add your Image</h5>
+                    <div className="form-group">
+                      <input
+                        type="file"
+                        id="file"
+                        accept=".png, .jpg, .jpeg"
+                        onChange={(e) => {
+                          setDefault(e);
+                        }}
+                      />
+                    </div>
+                    <div className="img-holder">
+                      {/* {console.log(this.state.selectedFile)} */}
+                      <img src={amazonurl} alt="" id="img" className="img" />
+                    </div>
+                    <div className="form-group">
+                      <button
+                        className="btn btn-primary"
+                        type="button"
+                        onClick={(e) => {
+                          onSave(e, selectedFile);
+                        }}
+                      >
+                        Upload
+                      </button>
+                    </div>
+                  </div>
+                </div>
                 <form>
                   <label for="InputUsername">
                     <b>Username</b>
@@ -69,7 +214,10 @@ function Profile() {
                     type="text"
                     class="form-control"
                     id="InputUsername"
-                    placeholder={user[0].username}
+                    placeholder={user[0].name}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                    }}
                   />
 
                   <div className="form-group Login">
@@ -80,24 +228,7 @@ function Profile() {
                       type="email"
                       class="form-control"
                       id="InputEmail"
-                      placeholder={user[0].user_email}
-                      // onChange={(e) => {
-                      //   passwordChangeHandler(e.target.value);
-                      // }}
-                    />
-                  </div>
-                  <div className="form-group Login">
-                    <label for="Password">
-                      <b>Password</b>
-                    </label>
-                    <input
-                      type="password"
-                      class="form-control"
-                      id="InputPassword"
-                      placeholder={user[0].password}
-                      // onChange={(e) => {
-                      //   passwordChangeHandler(e.target.value);
-                      // }}
+                      placeholder={user[0].email}
                     />
                   </div>
                   <div className="form-group Login">
@@ -108,19 +239,24 @@ function Profile() {
                       type="tel"
                       class="form-control"
                       id="InputPhone"
-                      placeholder={user[0].user_phone}
-                      // onChange={(e) => {
-                      //   passwordChangeHandler(e.target.value);
-                      // }}
+                      placeholder={user[0].phonenumber}
+                      onChange={(e) => {
+                        setPhone(e.target.value);
+                      }}
                     />
                   </div>
                   <div className="form-group Login">
                     <label for="InputTimezone">
                       <b>Timezone</b>
                     </label>
-                    <select class="form-control">
+                    <select
+                      class="form-control"
+                      onChange={(e) => {
+                        setTime(e.target.value);
+                      }}
+                    >
                       <option value="" disabled selected hidden>
-                        {user[0].user_time}
+                        {user[0].timezone}
                       </option>
                       <option
                         timeZoneId="5"
@@ -195,9 +331,16 @@ function Profile() {
                     <label for="InputCurrency">
                       <b>Currency</b>
                     </label>
-                    <select id="currency" name="currency" class="form-control">
+                    <select
+                      id="currency"
+                      name="currency"
+                      class="form-control"
+                      onChange={(e) => {
+                        setCurrency(e.target.value);
+                      }}
+                    >
                       <option value="" disabled selected hidden>
-                        {user[0].user_currency}
+                        {user[0].currency}
                       </option>
                       <option value="USD">US Dollar</option>
                       <option value="GBP">Great Britain Pound</option>
@@ -213,8 +356,16 @@ function Profile() {
                     </select>
                   </div>
 
-                  <Button className="button-save">Save Profile</Button>
+                  <Button
+                    className="button-save"
+                    onClick={(e) => {
+                      onUpdate(e);
+                    }}
+                  >
+                    Save Profile
+                  </Button>
                 </form>
+                <h4>{message}</h4>
               </center>
             </div>
           </div>
