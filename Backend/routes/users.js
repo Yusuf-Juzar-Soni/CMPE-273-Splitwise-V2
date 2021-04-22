@@ -283,7 +283,7 @@ router.post(
   async (req, res) => {
     const email = req.body.email;
     const name = req.body.name;
-    const phonenumber = req.body.phonenuber;
+    const phonenumber = req.body.phonenumber;
     const currency = req.body.currency;
     const time = req.body.timezone;
 

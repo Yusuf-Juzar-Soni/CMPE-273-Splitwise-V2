@@ -21,9 +21,9 @@ const UserSchema = new Schema({
     max: 5000,
   },
   phonenumber: {
-    type: Number,
+    type: String,
     required: false,
-    default: null,
+    default: "000-000-0000",
     min: 10,
     max: 10,
   },
