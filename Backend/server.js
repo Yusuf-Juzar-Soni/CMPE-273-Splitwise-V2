@@ -15,14 +15,20 @@ const invites = require("./routes/invites");
 const bills = require("./routes/bills");
 const comments = require("./routes/comments");
 const transactions = require("./routes/transactions");
-const imageupload=require("./routes/imageupload");
+const imageupload = require("./routes/imageupload");
 
 // DB Config
 const db = require("./config/keys").mongoURI;
 
 // Connect to MongoDB
 mongoose
-  .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(
+    db,
+    {
+      poolSize: 10,
+    },
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  )
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.log(err));
 
