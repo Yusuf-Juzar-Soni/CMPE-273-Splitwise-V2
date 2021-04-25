@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const User = require("../models/User");
 const Group = require("../models/Group");
+var kafka = require("../kafka/client");
 
 //passport config
 require("../config/passport")(passport);
@@ -76,22 +77,42 @@ router.post(
   }
 );
 
+// router.post(
+//   "/getAllMembers",
+//   passport.authenticate("jwt", { session: false }),
+//   (req, res) => {
+//     const groupName = req.body.g_name;
+//     console.log(groupName);
+//     Group.find({ group_name: groupName }, { members: 1, _id: 0 }).then(
+//       (members) => {
+//         if (members) {
+//           console.log("This is members", members);
+//           res.status(200).json(members);
+//         } else {
+//           res.status(400).json({ message: "Error has occured" });
+//         }
+//       }
+//     );
+//   }
+// );
+
 router.post(
   "/getAllMembers",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    const groupName = req.body.g_name;
-    console.log(groupName);
-    Group.find({ group_name: groupName }, { members: 1, _id: 0 }).then(
-      (members) => {
-        if (members) {
-          console.log("This is members", members);
-          res.status(200).json(members);
-        } else {
-          res.status(400).json({ message: "Error has occured" });
-        }
+    kafka.make_request("GetMembers", req.body, function (err, results) {
+      console.log("in result GetMembers");
+      console.log("results in GetMembrs ", results);
+      if (err) {
+        console.log("Inside err");
+        res.json({
+          status: "error",
+          msg: "Could not fetch members, Try Again.",
+        });
+      } else {
+        res.status(200).json(results);
       }
-    );
+    });
   }
 );
 

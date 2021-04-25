@@ -4,6 +4,8 @@ var connection = new require("./kafka/Connection");
 var getGroups = require("./services/users.js");
 var addBill = require("./services/bills_kafka");
 var addComment = require("./services/comments_kafka");
+var getMembers = require("./services/groups_kafka");
+var getInvites = require("./services/invites_kafka");
 
 function handleTopicRequest(topic_name, fname) {
   //var topic_name = 'root_topic';
@@ -44,3 +46,5 @@ function handleTopicRequest(topic_name, fname) {
 handleTopicRequest("getGroups", getGroups);
 handleTopicRequest("AddBill", addBill);
 handleTopicRequest("AddComment", addComment);
+handleTopicRequest("GetMembers", getMembers);
+handleTopicRequest("GetInvites", getInvites);

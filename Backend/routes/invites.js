@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const User = require("../models/User");
 const group = require("../models/Group");
+var kafka = require("../kafka/client");
 require("../config/passport")(passport);
 app.use(express.json());
 app.use(passport.initialize());
@@ -88,24 +89,44 @@ router.post(
   }
 );
 
+// router.post(
+//   "/getAllInvites",
+//   passport.authenticate("jwt", { session: false }),
+//   async (req, res) => {
+//     const user_email = req.body.email;
+//     console.log(user_email);
+//     await User.find({ email: user_email }, { groupsInvitedTo: 1, _id: 0 }).then(
+//       (inv_groups) => {
+//         if (inv_groups) {
+//           console.log("This is list of invites", inv_groups);
+//           res.status(200).json(inv_groups);
+//         } else {
+//           res.status(400).json({
+//             message: "Error has occured, could not fetch list of invites",
+//           });
+//         }
+//       }
+//     );
+//   }
+// );
+
 router.post(
   "/getAllInvites",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    const user_email = req.body.email;
-    console.log(user_email);
-    await User.find({ email: user_email }, { groupsInvitedTo: 1, _id: 0 }).then(
-      (inv_groups) => {
-        if (inv_groups) {
-          console.log("This is list of invites", inv_groups);
-          res.status(200).json(inv_groups);
-        } else {
-          res.status(400).json({
-            message: "Error has occured, could not fetch list of invites",
-          });
-        }
+    kafka.make_request("GetInvites", req.body, function (err, results) {
+      console.log("in result Get All Invites");
+      console.log("results in Get All Invites ", results);
+      if (err) {
+        console.log("Inside err");
+        res.json({
+          status: "error",
+          msg: "Could not fetch invites, Try Again.",
+        });
+      } else {
+        res.status(200).json(results);
       }
-    );
+    });
   }
 );
 
