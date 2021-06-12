@@ -1,11 +1,11 @@
 const fs = require("fs");
 const S3 = require("aws-sdk/clients/s3");
 
-const bucketName = "splitwiseyusuf123";
-const region = "us-east-2";
-const accessKeyId = "AKIA4J5KQVTSCYDWVH6Y";
+const bucketName = "";
+const region = "";
+const accessKeyId = "";
 
-const secretAccessKey = "L9sFKBCkoSF+0EbSPSyng9LLLj48Pjf0bhVBkSet";
+const secretAccessKey = "";
 
 const s3 = new S3({
   region,
