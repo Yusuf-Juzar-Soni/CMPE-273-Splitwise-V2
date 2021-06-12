@@ -37,6 +37,9 @@ We have simulated various features present in the original web application like
   <img  align="center" src="https://github.com/Yusuf-Juzar-Soni/CMPE-273-Splitwise-V2/blob/main/Frontend/src/Components/assets/img21.jpg">
 </p>
 <p align="center">  
+  <img  align="center" src="https://github.com/Yusuf-Juzar-Soni/CMPE-273-Splitwise-V2/blob/main/Frontend/src/Components/assets/img32.jpg">
+</p>
+<p align="center">  
   <img  align="center" src="https://github.com/Yusuf-Juzar-Soni/CMPE-273-Splitwise-V2/blob/main/Frontend/src/Components/assets/img33.jpg">
 </p>
 <p align="center">  
